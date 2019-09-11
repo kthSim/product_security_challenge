@@ -6,7 +6,6 @@ from project.models import User
 
 
 @app.route("/")
-@login_required
 def welcome():
     return render_template("base.html", title='Zendesk Security Challenge')
 

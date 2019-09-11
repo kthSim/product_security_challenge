@@ -1,11 +1,12 @@
 from project import app
-from flask import render_template, flash, redirect, url_for
-from flask_login import current_user, login_user, logout_user
+from flask import render_template, flash, redirect, url_for, request
+from flask_login import current_user, login_user, logout_user, login_required
 from project.forms import LoginForm
 from project.models import User
 
 
 @app.route("/")
+@login_required
 def welcome():
     return render_template("base.html", title='Zendesk Security Challenge')
 
@@ -27,13 +28,24 @@ def login():
         else:
             flash('Login Requested for user {}, remember_me={}'.format(form.username.data, form.rmbr_user.data))
             login_user(user, remember=form.rmbr_user.data)
-            return redirect(url_for('welcome'))
+            ret_page = request.args.get('next')
+
+            if not ret_page:
+                ret_page = url_for('welcome')
+
+            return redirect(ret_page)
 
     return render_template("login.html", title="Log In", form=form)
 
 
 @app.route("/logout")
 def logout():
-    flash("{}, you have been logged out!".format(current_user.name))
+    flash("{}, you have been logged out!".format(current_user.username))
     logout_user()
     return redirect(url_for('welcome'))
+
+
+@app.route("/needLogin")
+@login_required
+def needLogin():
+    return render_template("needLogin.html", title="FOOOOOOOL")

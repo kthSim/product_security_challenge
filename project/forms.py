@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField
-from wtforms.validators import DataRequired, ValidationError, Email, EqualTo
+from wtforms.validators import DataRequired, ValidationError, Email, EqualTo, Length
 from project.models import User
 
 
@@ -19,7 +19,7 @@ class RegisterNewUserForm(FlaskForm):
     multi_fac_auth = BooleanField('I want Multifactor Authentication')
     submit = SubmitField('Register')
 
-    def validate_name(self, username):
+    def validate_username(self, username):
         user = User.query.filter(User.username == username.data).first()
         if user is not None:
             raise ValidationError('Username has already been taken')

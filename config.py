@@ -7,3 +7,6 @@ class Config(object):
         'sqlite:///' + os.path.join(basedir, 'project.db')
     SQLALCHEMY_TRACK_NOTIFICATIONS = False
     BCRYPT_LOG_ROUNDS = 15
+
+    #SESSION_COOKIE_SECURE = True
+    #SESSION_COOKIE_HTTPONLY = True

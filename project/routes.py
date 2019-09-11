@@ -1,4 +1,4 @@
-from project import app
+from project import app, db
 from flask import render_template, flash, redirect, url_for, request
 from flask_login import current_user, login_user, logout_user, login_required
 from project.forms import LoginForm, RegisterNewUserForm
@@ -50,8 +50,19 @@ def needLogin():
     return render_template("needLogin.html", title="FOOOOOOOL")
 
 
-@app.route("/register")
+@app.route("/register", methods=['GET', 'POST'])
 def reg_user():
+    if current_user.is_authenticated:
+        return redirect((url_for('index')))
+
     form = RegisterNewUserForm()
+
+    if form.validate_on_submit():
+        user = User(username=form.username.data, email=form.email.data)
+        user.set_password(form.password.data)
+        db.session.add(user)
+        db.session.commit()
+        flash("Congratz! You've been registered successfully, go ahead and log in~!")
+        return redirect(url_for('login'))
 
     return render_template("regUser.html", title="Register", form=form)

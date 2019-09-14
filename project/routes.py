@@ -1,8 +1,9 @@
 from project import app, db
 from flask import render_template, flash, redirect, url_for, request
 from flask_login import current_user, login_user, logout_user, login_required
-from project.forms import LoginForm, RegisterNewUserForm
+from project.forms import LoginForm, RegisterNewUserForm, PasswordResetRequestForm, PasswordResetForm
 from project.models import User
+from project.email import send_email_password_reset
 
 
 @app.route("/")
@@ -70,3 +71,42 @@ def reg_user():
         return redirect(url_for('login'))
 
     return render_template("regUser.html", title="Register", form=form)
+
+
+@app.route("/reset_password_request", methods=['GET', 'POST'])
+def reset_password_request():
+    form = PasswordResetRequestForm()
+
+    if form.validate_on_submit():
+        user = User.query.filter(User.email == form.email.data).first()
+
+        if user is None:
+            flash("Apologies, but that email doesn't seem to be registered with us")
+            return redirect(url_for('reset_password_request'))
+        else:
+            flash("Please check your mail for instructions to reset your password")
+            send_email_password_reset(user)
+            return redirect(url_for('login'))
+
+    return render_template('resetPwdRequest.html', title="Reset your password", form=form)
+
+
+@app.route("/reset_password/<token>", methods=['GET', 'POST'])
+def reset_password(token):
+    if current_user.is_authenticated:
+        return redirect(url_for('welcome'))
+    user = User.verify_token_reset_password(token)
+
+    if not user:
+        app.logger.info("Password reset token mismatch found, redirected to welcome page")
+        return redirect(url_for('welcome'))
+
+    form = PasswordResetForm()
+    if form.validate_on_submit():
+        user.set_password(form.password.data)
+        db.session.commit()
+        flash('Your password has been reset!')
+        app.logger.info("Password has been reset for User[{}]".format(user.username))
+        return redirect(url_for('login'))
+
+    return render_template('resetPwd.html', form=form)

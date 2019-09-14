@@ -1,5 +1,7 @@
-from project import db, bcrypt, login
+from project import db, bcrypt, login, app
 from flask_login import UserMixin
+from time import time
+import jwt
 
 
 class User(db.Model, UserMixin):
@@ -20,3 +22,16 @@ class User(db.Model, UserMixin):
     @login.user_loader
     def load_user(id):
         return User.query.get(int(id))
+
+    def get_token_reset_password(self, expires_in=900):
+        return jwt.encode({
+            'reset_password': self.id, 'exp': time() + expires_in},
+            app.config['SECRET_KEY'], algorithm='HS256').decode('utf-8')
+
+    @staticmethod
+    def verify_token_reset_password(token):
+        try:
+            id = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])['reset_password']
+        except:
+            return
+        return User.query.get(id)

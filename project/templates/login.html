@@ -47,7 +47,7 @@
                 <label class="pull-left checkbox-inline">
                     {{form.rmbr_user()}} {{form.rmbr_user.label}}
                 </label>
-                <a href="#" class="pull-right">Forgot Password?</a>
+                <a href="{{ url_for('reset_password_request') }}" class="pull-right">Forgot Password?</a>
             </div>
 
         </form>

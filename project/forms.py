@@ -28,3 +28,14 @@ class RegisterNewUserForm(FlaskForm):
         user = User.query.filter(User.email == email.data).first()
         if user is not None:
             raise ValidationError('Email has already been taken')
+
+
+class PasswordResetRequestForm(FlaskForm):
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    submit = SubmitField('Request Password Reset')
+
+
+class PasswordResetForm(FlaskForm):
+    password = StringField('Password', validators=[DataRequired()])
+    password_confirm = StringField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
+    submit = SubmitField('Reset Password')

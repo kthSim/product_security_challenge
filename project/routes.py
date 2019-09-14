@@ -7,7 +7,7 @@ from project.models import User
 
 @app.route("/")
 def welcome():
-    return render_template("base.html", title='Zendesk Security Challenge')
+    return render_template("home.html", title='Zendesk Security Challenge')
 
 
 @app.route("/login", methods=['GET', 'POST'])

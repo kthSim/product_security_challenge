@@ -34,14 +34,6 @@
         {% endif %}
         {% endwith %}
 
-        <div>
-            {% if current_user.is_anonymous %}
-            <h1> Hey there stranger, mind logging in?</h1>
-            {% else %}
-            <h1> Hey there {{ current_user.username}}! </h1>
-            {% endif %}
-        </div>
-
         {% block content %}{% endblock %}
     </div>
 

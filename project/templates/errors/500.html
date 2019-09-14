@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+
+{% extends "base.html" %}
+
+<body>
+
+    {% block content %}
+
+    <div>
+        <h1> An internal error has occured and the admin has been informed. Sorry about that.</h1>
+        <h2> <a href="{{ url_for('welcome')}}"> Let's head back </a> </h2>
+    </div>
+
+    {% endblock %}
+
+</body>

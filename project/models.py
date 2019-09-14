@@ -8,6 +8,8 @@ class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), index=True, unique=True)
     email = db.Column(db.String(128), index=True, unique=True)
+    lockout = db.Column(db.Boolean, unique=False, default=False)
+    fail_count = db.Column(db.Integer, unique=False, default=0)
     password_hash = db.Column(db.String(128))
 
     def __repr__(self):

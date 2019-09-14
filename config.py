@@ -16,5 +16,5 @@ class Config(object):
     ADMINS = ['ZDSecSolKS@gmail.com']
 
     #SESSION_COOKIE_SECURE = True
-    #SESSION_COOKIE_HTTPONLY = True
+    SESSION_COOKIE_HTTPONLY = True
 

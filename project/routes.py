@@ -1,5 +1,5 @@
 from project import app, db
-from flask import render_template, flash, redirect, url_for, request
+from flask import render_template, flash, redirect, url_for, request, session
 from flask_login import current_user, login_user, logout_user, login_required
 from project.forms import LoginForm, RegisterNewUserForm, PasswordResetRequestForm, PasswordResetForm
 from project.models import User
@@ -8,11 +8,14 @@ from project.email import send_email_password_reset
 
 @app.route("/")
 def welcome():
+    print(session)
+    print()
     return render_template("home.html", title='Zendesk Security Challenge')
 
 
 @app.route("/login", methods=['GET', 'POST'])
 def login():
+
     if current_user.is_authenticated:
         return redirect(url_for('welcome'))
 
@@ -22,27 +25,48 @@ def login():
         #user = User.query.filter_by(username=form.username.data).first()
         user = User.query.filter(User.username == form.username.data).first()
 
-        if user is None or not user.check_password(form.password.data):
+        if user is None or not user.check_password(form.password.data) or user.lockout:
+
+            if user is not None:
+
+                user.fail_count = user.fail_count + 1
+                db.session.commit()
+
+                if user.fail_count > 5:
+                    user.lockout = True
+                    db.session.commit()
+
+                    app.logger.info("User[{}]'s account is locked")
+                    flash("Your account has been locked due to excessive failed login attempts,"
+                          "please reset your password to log back in")
+                    return redirect(url_for('reset_password_request'))
+
             flash("Apologies but that is an Invalid username/password combination")
             app.logger.info("Login Attempt Failed")
             return redirect(url_for('login'))
-        else:
-            flash('Login Requested for user {}, remember_me={}'.format(form.username.data, form.rmbr_user.data))
-            login_user(user, remember=form.rmbr_user.data)
-            ret_page = request.args.get('next')
 
-            if not ret_page:
-                ret_page = url_for('welcome')
+        flash('Login Requested for user {}, remember_me={}'.format(form.username.data, form.rmbr_user.data))
+        login_user(user, remember=form.rmbr_user.data)
+        session['username'] = user.username
 
-            app.logger.info("Logging in user[{}]".format(form.username.data))
-            return redirect(ret_page)
+        ret_page = request.args.get('next')
+
+        if not ret_page:
+            ret_page = url_for('welcome')
+
+        app.logger.info("Logging in user[{}]".format(form.username.data))
+        return redirect(ret_page)
+
 
     return render_template("login.html", title="Log In", form=form)
 
 
 @app.route("/logout")
+@login_required
 def logout():
     flash("{}, you have been logged out!".format(current_user.username))
+    session.pop('username', None)
+    session.pop('userid', None)
     app.logger.info("User[{}] has logged out".format(current_user.username))
     logout_user()
     return redirect(url_for('welcome'))

@@ -23,6 +23,7 @@ def login():
 
         if user is None or not user.check_password(form.password.data):
             flash("Apologies but that is an Invalid username/password combination")
+            app.logger.info("Login Attempt Failed")
             return redirect(url_for('login'))
         else:
             flash('Login Requested for user {}, remember_me={}'.format(form.username.data, form.rmbr_user.data))
@@ -32,6 +33,7 @@ def login():
             if not ret_page:
                 ret_page = url_for('welcome')
 
+            app.logger.info("Logging in user[{}]".format(form.username.data))
             return redirect(ret_page)
 
     return render_template("login.html", title="Log In", form=form)
@@ -40,6 +42,7 @@ def login():
 @app.route("/logout")
 def logout():
     flash("{}, you have been logged out!".format(current_user.username))
+    app.logger.info("User[{}] has logged out".format(current_user.username))
     logout_user()
     return redirect(url_for('welcome'))
 
@@ -63,6 +66,7 @@ def reg_user():
         db.session.add(user)
         db.session.commit()
         flash("Congratz! You've been registered successfully, go ahead and log in~!")
+        app.logger.info("New user[{}] registered".format(form.username.data))
         return redirect(url_for('login'))
 
     return render_template("regUser.html", title="Register", form=form)

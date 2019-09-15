@@ -23,7 +23,8 @@ From there you can try to login, register a new user, reset your password, or lo
 
 To test out the fetures, a sample database with two users have been implemented. 
 1. **Username**: admin, **Password**: password 
-2. **Username**: user2, **Password**: tesr (Note: this account is currently locked out and needs to have their password reset (use email of ZDSecSolKS@gmail.com))
+2. **Username**: user2, **Password**: tesr (Note: this account is currently locked out and needs to have 
+their password reset (use email of ZDSecSolKS@gmail.com, email password found in the config.py file))
 
 Note that the database will be reset everytime the binary is restarted!
 

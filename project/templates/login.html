@@ -1,6 +1,7 @@
-<!-- Originally provided zendesk html, kept for reference -->
 <!DOCTYPE html>
 <html lang="en">
+
+{% extends "base.html" %}
 
 <head>
     <meta charset="utf-8">
@@ -14,28 +15,47 @@
 </head>
 
 <body>
+    {% block content %}
     <div class="login-form">
         <form action="" method="post">
             {{ form.hidden_tag() }}
             <h2 class="text-center">Log in</h2>
+
             <div class="form-group">
-                <input type="text" class="form-control" placeholder="Username" required="required"
-                value="{{ form.username }}">
+                {{form.username(size=32, class_="form-control", placeholder="Username", required="required")}}
+
+                {% for error in form.username.errors %}
+                <span> [{{ error }}] </span>
+                {% endfor %}
+
             </div>
+
             <div class="form-group">
-                <input type="password" class="form-control" placeholder="Password" required="required"
-                value="{{ form.password }}">
+                {{form.password(size=32, class_="form-control", placeholder="Password", required="required")}}
+
+                {% for error in form.password.errors %}
+                <span> [{{ error }}] </span>
+                {% endfor %}
+
             </div>
+
             <div class="form-group">
-                <button type="submit" class="btn btn-primary btn-block">Log in</button>
+                {{form.submit(class_="btn btn-primary btn-block")}}
             </div>
+
             <div class="clearfix">
-                <label class="pull-left checkbox-inline"><input type="checkbox"> Remember me</label>
-                <a href="#" class="pull-right">Forgot Password?</a>
+                <label class="pull-left checkbox-inline">
+                    {{form.rmbr_user()}} {{form.rmbr_user.label}}
+                </label>
+                <a href="{{ url_for('reset_password_request') }}" class="pull-right">Forgot Password?</a>
             </div>
+
         </form>
-        <p class="text-center"><a href="#">Create an Account</a></p>
+        <p class="text-center"><a href="{{ url_for('reg_user') }}">Register an Account</a></p>
     </div>
+
+    {% endblock %}
+
 </body>
 
 </html>

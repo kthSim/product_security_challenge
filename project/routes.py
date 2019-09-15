@@ -8,8 +8,6 @@ from project.email import send_email_password_reset
 
 @app.route("/")
 def welcome():
-    print(session)
-    print()
     return render_template("home.html", title='Zendesk Security Challenge')
 
 

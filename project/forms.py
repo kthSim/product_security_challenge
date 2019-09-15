@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField
-from wtforms.validators import DataRequired, ValidationError, Email, EqualTo, Length
+from wtforms.validators import DataRequired, ValidationError, Email, EqualTo, Length, Regexp
 from project.models import User
 
 
@@ -12,9 +12,12 @@ class LoginForm(FlaskForm):
 
 
 class RegisterNewUserForm(FlaskForm):
+    pwd_regex_msg = "Must be at least 8 characters long with at least 1 letter, 1 number, 1 special character"
+    pwd_regex = '^(?=(.*[a-zA-Z]){1,})(?=(.*[\d]){1,})(?=(.*[\W]){1,})(?!.*\s).*$'
+
     username = StringField('Username', validators=[DataRequired(), Length(min=3)])
     email = StringField('Email', validators=[DataRequired(), Email()])
-    password = StringField('Password', validators=[DataRequired()])
+    password = StringField('Password', validators=[DataRequired(), Length(min=8), Regexp(pwd_regex, message=pwd_regex_msg)])
     password_confirm = StringField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
     multi_fac_auth = BooleanField('I want Multifactor Authentication')
     submit = SubmitField('Register')

@@ -2,41 +2,52 @@
 ### The Zendesk Product Security Challenge
 
 **To try out my solution, there are two possible methods to do so:**
-1. If you're using a windows machine, grab the .exe binary in my releases page!
-2. If you're using linux machine, please read the following steps.
+1. If you're using a windows or linux machine, grab the respective binary in my releases page!
+2. If you're using linux machine, you can build it by reading the following steps below. 
 
 **Building on Linux**
 
 *Prerequisites: git, python3.X, pip, python3-venv*
 
 1. Clone the repo to your desired directory
-3. Run: `pip install -r requirements.txt` 
-4. Run: `pyinstaller -F --add-data "project:project" --add-data "migrations:migrations" --add-binary "project.db;."  zendesksol.py`
+2. Run: `python3 -m venv venv`
+3. Run: `venv/bin/pip install -r requirements.txt` 
+4. Run: `venv/bin/pyinstaller -F --add-data "project:project" --add-data "migrations:migrations" --add-binary "project.db;."  zendesksol.py`
+5. Your binary file can now be found in the `dist/` folder!
 
-We are super excited that you want to be part of the Product Security team at Zendesk.
+## Running the binary
+Once the binary has been started, simply visit localhost:5555 to view the welcome page. 
+From there you can try to login, register a new user, reset your password, or logout.
 
-**To get started, you need to fork this repository to your own Github profile and work off that copy.**
 
-In this repository, there are the following files:
-1. README.md - this file
-2. project/ - the folder containing all the files that you require to get started
-3. project/index.html - the main HTML file containing the login form
-4. project/assets/ - the folder containing supporting assets such as images, JavaScript files, Cascading Style Sheets, etc. You shouldn’t need to make any changes to these but you are free to do so if you feel it might help your submission
+To test out the fetures, a sample database with two users have been implemented. 
+1. **Username**: admin, **Password**: password 
+2. **Username**: user2, **Password**: tesr (Note: this account is currently locked out and needs to have their password reset (use email of ZDSecSolKS@gmail.com))
 
-As part of the challenge, you need to implement an authentication mechanism with as many of the following features as possible. It is a non exhaustive list, so feel free to add or remove any of it as deemed necessary.
+Note that the database will be reset everytime the binary is restarted!
 
-1. Input sanitization and validation
-2. Password hashed
-3. Prevention of timing attacks
-4. Logging
-5. CSRF prevention
-6. Multi factor authentication
-7. Password reset / forget password mechanism
-8. Account lockout
-9. Cookie
-10. HTTPS
-11. Known password check
+## The following features have been implemented
 
-You will have to create a simple binary (platform of your choice) to provide any server side functionality you may require. Please document steps to run the application. Your submission should be a link to your Github repository which you've already forked earlier together with the source code and binaries.
+#### 1. Input sanitization and validation
+Implemented with flask's inbuilt render_template which automatically handles sanitization.
+New users must have usernames of length 3 and passwords of legnth 8 with at least 1 number, 1 letter, 1 special character with no whitespaces.
+
+#### 2. Password hashed
+Implemented with Flask-Bcrypt, salting 15 rounds. 
+
+#### 3. Logging
+Implemented with flask's inbuilt logger. Creates a log file if it doesn't exist and logs information about the program, rotating once it hits a size limit of around 20MB.
+
+#### 4. CSRF prevention
+Implemented with WTForms. A hidden token has been implemented on every page where user input is allowed.
+
+#### 5. Password reset / forget password mechanism
+Implemented with `jwt`. At the login page, there's a link to submit a user's email to reset their password. A reset email will be sent to that email if it belongs to that user where they can use a token to reset their password.
+
+#### 6. Account lockout
+After a user has failed to login 5 times, they will be locked out and must reset their password to log back in.
+
+#### 7. Cookie
+Implemented with session from Flask. Closing the site and opening it back up will still show the logged in page if user is logged in.
 
 Thank you!

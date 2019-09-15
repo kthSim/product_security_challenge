@@ -1,7 +1,17 @@
-# Zendesk Product Security
+# Zendesk Product Security (Submission by Keith Sim)
 ### The Zendesk Product Security Challenge
 
-Hello friend,
+**To try out my solution, there are two possible methods to do so:**
+1. If you're using a windows machine, grab the .exe binary in my releases page!
+2. If you're using linux machine, please read the following steps.
+
+**Building on Linux**
+
+*Prerequisites: git, python3.X, pip, python3-venv*
+
+1. Clone the repo to your desired directory
+3. Run: `pip install -r requirements.txt` 
+4. Run: `pyinstaller -F --add-data "project:project" --add-data "migrations:migrations" --add-binary "project.db;."  zendesksol.py`
 
 We are super excited that you want to be part of the Product Security team at Zendesk.
 

@@ -7,13 +7,14 @@
 
 **Building on Linux**
 
-*Prerequisites: git, python3.X, pip, python3-venv*
+*Prerequisites: git, python3.X, pip*
 
-1. Clone the repo to your desired directory
+1. Clone the repo to your desired directory and enter into it
 2. Run: `python3 -m venv venv`
-3. Run: `venv/bin/pip install -r requirements.txt` 
-4. Run: `venv/bin/pyinstaller -F --add-data "project:project" --add-data "migrations:migrations" --add-binary "project.db;."  zendesksol.py`
-5. Your binary file can now be found in the `dist/` folder!
+3. Run: `pip install --upgrade pip`
+4. Run: `pip install -r requirements.txt --user` 
+5. Run: `pyinstaller -F --add-data "project:project" --add-data "migrations:migrations" --add-binary "project.db:."  zendesksol.py`
+6. Your binary file can now be found in the `dist/` folder!
 
 ## Running the binary
 Once the binary has been started, simply visit localhost:5555 to view the welcome page. 

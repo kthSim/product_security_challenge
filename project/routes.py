@@ -128,6 +128,7 @@ def reset_password(token):
     form = PasswordResetForm()
     if form.validate_on_submit():
         user.set_password(form.password.data)
+        user.lockout = False
         db.session.commit()
         flash('Your password has been reset!')
         app.logger.info("Password has been reset for User[{}]".format(user.username))
